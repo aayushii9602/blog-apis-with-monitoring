@@ -1,17 +1,31 @@
 import dotenv from "dotenv";
+dotenv.config(); // always load first
+
 import app from "./app";
 import connectDB from "./config/db";
-
-dotenv.config();
+import logger from "./utils/logger";
 
 const PORT = process.env.PORT || 5000;
 
 async function start() {
-  await connectDB();
+  try {
+    // connect database
+    await connectDB();
+    logger.info("Database connected successfully");
 
-  app.listen(PORT, () => {
-    console.log(`Server running on ${PORT}`);
-  });
+    // start server
+    app.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT}`);
+    });
+
+  } catch (error: any) {
+    logger.error("Server startup failed", {
+      message: error.message,
+      stack: error.stack,
+    });
+
+    process.exit(1);
+  }
 }
 
 start();
