@@ -17,5 +17,15 @@ services:
       - "27017:27017"
     volumes:
       - my-blog-db:/data/db
+
+  # prometheus
+  prom-server:
+    image: prom/prometheus
+    ports: 
+      - "9090:9090"
+    volumes:
+      - "./prometheus-config.yml:/etc/prometheus/prometheus.yml"
+    depends_on:
+      - backend
 volumes:
   my-blog-db:
