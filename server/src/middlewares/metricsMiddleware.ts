@@ -10,9 +10,8 @@ export const metricsMiddleware = (
 
   res.on("finish", () => {
     const duration = (Date.now() - start) / 1000;
-
-    const route = req.route?.path || req.baseUrl || req.path;
-
+    const route = req.baseUrl;
+    console.log("Status code",res.statusCode)
     // total request count
     requestCounter.labels(req.method, route, res.statusCode.toString()).inc();
 
@@ -20,8 +19,8 @@ export const metricsMiddleware = (
     httpRequestDuration
       .labels({
         method: req.method,
-        route: req.url,
-        status_code: req.statusCode,
+        route: route,
+        status_code: res.statusCode,
       })
       .observe(duration);
   });
