@@ -1,5 +1,4 @@
 version: '5.0.2'
-
 services:
   backend:
     build: .
@@ -27,5 +26,13 @@ services:
       - "./prometheus-config.yml:/etc/prometheus/prometheus.yml"
     depends_on:
       - backend
+  
+  # grafana
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "prom-server"
 volumes:
   my-blog-db:

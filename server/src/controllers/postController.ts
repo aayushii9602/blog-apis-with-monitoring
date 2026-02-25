@@ -1,11 +1,22 @@
 import { Request, Response } from "express";
 import Post from "../models/Post";
+import logger from "../utils/logger";
+import { AuthRequest } from "../middlewares/authMiddleware";
+import User from "../models/User";
 
 // CREATE POST
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: AuthRequest, res: Response) => {
+  logger.info("in create post function");
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  const user = await User.findOne({ _id: req.user.id });
+  // console.log("user",user)
+
   const post = await Post.create({
     ...req.body,
-    author: req.body.userId, // later from auth middleware
+    authorId:req.user.id,
+    author: user?.name,
   });
 
   res.status(201).json(post);

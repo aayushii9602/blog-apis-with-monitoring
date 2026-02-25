@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes";
 import postRoutes from "./routes/postRoutes";
 import { errorHandler } from "./middlewares/errorMiddleware";
 import client from "./utils/metrics";
+import { metricsMiddleware } from "./middlewares/metricsMiddleware";
 
 const app = express();
 
@@ -14,13 +15,13 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(compression());
-app.use(errorHandler);
+app.use(metricsMiddleware);
 
 app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-  })
+    rateLimit({
+        windowMs: 15 * 60 * 1000,
+        max: 100,
+    })
 );
 
 app.use("/api/auth", authRoutes);
@@ -36,4 +37,5 @@ app.get("/metrics", async (req, res) => {
   res.end(await client.register.metrics());
 });
 
+app.use(errorHandler);
 export default app;
